@@ -8,22 +8,20 @@ notesRouter.get('/', async (request, response) => {
     response.json(notes)
 })
 
-//Fetching particular note by id
+//Fetching particular note by id  (after applying express-async-errors library)
 notesRouter.get('/:id', async (request, response, next) => {
-  try {
+ 
     const note = await Note.findById(request.params.id)
     if (note) {
       response.json (note)
     }else {
       response.status(404).end()
     }
-  }catch (exception) {
-    next(exception)
-  }
+  
 })
 
 
-//Adding new note 
+//Adding new note (after applying express-async-errors library)
 notesRouter.post('/', async (request, response, next) => {
   const body = request.body
 
@@ -32,24 +30,16 @@ notesRouter.post('/', async (request, response, next) => {
     important: body.important || false,
     date: new Date()
   })
-  try{
+
     const savedNote = await note.save()
     response.json(savedNote)
-  } catch (exception){
-    next (exception)
-  }
 })
 
 
-//Deleting exiting note
+//Deleting exiting note (after applying express-async-errors library)
 notesRouter.delete('/:id', async (request, response, next) => {
-  try{
-    await Note.findByIdAndRemove(request.params.id)
-
+   await Note.findByIdAndRemove(request.params.id)
       response.status(204).end()
-    }catch(exception) {
-      next (exception)
-    }
 })
 
 

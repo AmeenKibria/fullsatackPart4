@@ -1,25 +1,12 @@
+
 const notesRouter = require('express').Router()
 const Note = require('../models/note')
 
-
-//Fetching all notes
 notesRouter.get('/', async (request, response) => {
   const notes = await Note.find({})
   response.json(notes.map(note => note.toJSON()))
 })
 
-
-//Fetching particular note by id  (after applying express-async-errors library)
-notesRouter.get('/:id', async (request, response) => {
-  const note = await Note.findById(request.params.id)
-  if (note) {
-    response.json(note.toJSON())
-  } else {
-    response.status(404).end()
-  }
-})
-
-//Adding new note (after applying express-async-errors library)
 notesRouter.post('/', async (request, response) => {
   const body = request.body
 
@@ -33,15 +20,15 @@ notesRouter.post('/', async (request, response) => {
   response.json(savedNote.toJSON())
 })
 
-
-//Deleting exiting note (after applying express-async-errors library)
-notesRouter.delete('/:id', async (request, response, next) => {
-   await Note.findByIdAndRemove(request.params.id)
-      response.status(204).end()
+notesRouter.get('/:id', async (request, response) => {
+  const note = await Note.findById(request.params.id)
+  if (note) {
+    response.json(note.toJSON())
+  } else {
+    response.status(404).end()
+  }
 })
 
-
-//Updating notes
 notesRouter.put('/:id', (request, response, next) => {
   const body = request.body
 
@@ -57,6 +44,9 @@ notesRouter.put('/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
-
+notesRouter.delete('/:id', async (request, response) => {
+  await Note.findByIdAndRemove(request.params.id)
+  response.status(204).end()
+})
 
 module.exports = notesRouter
